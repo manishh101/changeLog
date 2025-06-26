@@ -1,6 +1,9 @@
 import {Router} from 'express'
 import { body, oneOf, validationResult } from "express-validator";
 import { handleInputErrors } from './modules/middleware';
+import { createProduct, deleteProduct, getOneProduct, getProducts, updateProduct } from './handlers/products';
+import { getUpdates,getOneUpdate,createUpdate,updateUpdate,deleteUpdate } from './handlers/update';
+
 
 const router = Router()
 
@@ -8,43 +11,29 @@ const router = Router()
  * Product
  **/ 
 
-router.get('/product', (req,res) => {
-  res.send({message: 'message' })
-})
-router.get('/product/:id', (req,res)=> {
-  res.json({message: 'message'})
-})
-router.put('/product/:id', body('name').isString(),handleInputErrors, (req,res)=> {
-  
-})
-router.post('/product',body('name').isString(),handleInputErrors,  (req,res)=> {})
-router.delete('/product/:id', (req,res)=> {})
+router.get('/product', getProducts)
+router.get('/product/:id', getOneProduct)
+router.put('/product/:id', body('name').isString(),handleInputErrors, updateProduct)
+router.post('/product',body('name').isString(),handleInputErrors,  createProduct)
+router.delete('/product/:id', deleteProduct)
 
 /**
  * Update
  * */ 
 
-router.get('/update', (req,res)=>{})
-router.get('/update/:id', (req,res)=> {})
+router.get('/update',getUpdates )
+router.get('/update/:id', getOneUpdate)
 router.put('/update/:id',
   body('title').optional(), 
   body('body').optional(),
-  oneOf([
-    body('status').equals('IN_PROGRESS'),
-    body('status').equals('SHIPPED'),
-    body('status').equals('DEPRECATED')
-  ]), 
+  body('status').isIn(['IN_PROGRESS','SHIPPED','DEPRECATED']).optional(), 
   body('version').optional(),
-  body('asset').optional() ,  (req,res)=> {
-
-  })
+  body('asset').optional() , updateUpdate )
 router.post('/update',
   body('title').exists(), 
   body('body').exists(),
-  body('productId').exists().isString(), (req,res)=> {
-
-  })
-router.delete('/update/:id', (req,res)=> {})
+  body('productId').exists().isString(), createUpdate)
+router.delete('/update/:id',deleteUpdate )
 
 /**
  * Update point
